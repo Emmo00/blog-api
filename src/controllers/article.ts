@@ -7,6 +7,14 @@ export async function postArticle(req: Request, res: Response) {
   if (!content || !title) {
     return res.status(400).json({ error: 'BAD REQUEST' });
   }
+  if (await Article.findOne({ title })) {
+    return res
+      .status(400)
+      .json({
+        error: 'BAD REQUEST',
+        message: 'Article with this title already exists',
+      });
+  }
   const author = res.locals.user.username;
   const article = await Article.create({ author, content, title });
   return res.status(201).json({ message: 'Article created', data: article });

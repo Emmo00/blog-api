@@ -11,6 +11,11 @@ export async function signUp(req: Request, res: Response) {
   if (!username || !password || !email) {
     return res.status(400).json({ error: 'BAD REQUEST' });
   }
+  if (await User.findOne({ email })) {
+    return res
+      .status(400)
+      .json({ error: 'BAD REQUEST', message: 'Use another email' });
+  }
   const hashedPassword = await hashPassword(password);
   await User.create({ username, password: hashedPassword, email });
   return res.status(201).json({ message: 'User created' });
